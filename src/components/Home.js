@@ -1,7 +1,7 @@
-//import axios from 'axios';
+import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RiLogoutBoxRLine, RiAddCircleLine } from "react-icons/ri";
 import { MdRemoveCircleOutline } from "react-icons/md";
 
@@ -9,6 +9,29 @@ const name = "Fulano";
 
 export default function Home() {
   const navigate = useNavigate();
+  const [valors, setValors] = useState([]);
+  const [noValors, setNoValors] = useState([]);
+  const [haveValors, setHaveValors] = useState([]);
+
+  useEffect(() => {
+    const requisicao = axios.get(`http://localhost:5000/add_or_remove_value`, {
+      headers: {
+        authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+      },
+    });
+
+    requisicao.then((Selecione) => {
+      if (Selecione === undefined) {
+        setNoValors("");
+        setHaveValors("clean");
+      } else {
+        setNoValors("clean");
+        setHaveValors("");
+        setValors(Selecione.data);
+      }
+    });
+  }, []);
+
   return (
     <Container>
       <h1>
@@ -17,11 +40,23 @@ export default function Home() {
           <RiLogoutBoxRLine />
         </div>{" "}
       </h1>
-      <Box>
-        <p>Não há registros de entrada ou saída</p>
-      </Box>
+      <div className={noValors}>
+        <Box>
+          <p>Não há registros de entrada ou saída</p>
+        </Box>
+      </div>
+      <div className={haveValors}>
+        <Box>
+          <div className="valorsContainer">
+            {valors.map((val, index) => (
+              <div className="valor"> {`${val.description}: ${val.valor}`}</div>
+            ))}
+          </div>
+        </Box>
+      </div>
+
       <div></div>
-      <Entrance_and_Exit>
+      <EntranceExit>
         <div onClick={() => navigate("/novaentrada")} className="buton">
           <div className="icon">
             <RiAddCircleLine />
@@ -35,7 +70,7 @@ export default function Home() {
           </div>
           <p>Nova saida</p>
         </div>
-      </Entrance_and_Exit>
+      </EntranceExit>
     </Container>
   );
 }
@@ -48,6 +83,9 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  .clean {
+    display: none;
+  }
   h1 {
     height: 28px;
     width: 326px;
@@ -88,8 +126,14 @@ const Box = styled.div`
 
     width: 180px;
   }
+
+  .valorsContainer {
+    width: 326px;
+    height: 446px;
+    padding: 23px 35px 0 35px;
+  }
 `;
-const Entrance_and_Exit = styled.div`
+const EntranceExit = styled.div`
   width: 326px;
   display: flex;
   justify-content: space-between;
