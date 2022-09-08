@@ -3,8 +3,9 @@ import styled from "styled-components";
 
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import axios from "axios";
 
-export default function Login() {
+export default function Registration() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -23,7 +24,7 @@ export default function Login() {
       />
       <input
         disabled={false}
-        type="password"
+        type="Email"
         name="input"
         placeholder="Email"
         value={email}
@@ -46,11 +47,29 @@ export default function Login() {
         onChange={(e) => setConfirmPassword(e.target.value)}
       />
 
-      <Button onClick={() => navigate("/")}>Cadastrar</Button>
+      <Button onClick={() => registrate()}>Cadastrar</Button>
 
       <p onClick={() => navigate("/")}>Já tem uma conta? Entre agora!</p>
     </Container>
   );
+
+  function registrate() {
+    if (password === confirmPassword) {
+      axios
+        .post("http://localhost:5000/cadastro", {
+          name: name,
+          email: email,
+          password: password,
+        })
+        .then((response) => {
+          console.log("cadastro efetuado");
+          navigate("/");
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    } else alert("senhas não conicidem");
+  }
 }
 
 const Container = styled.div`

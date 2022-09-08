@@ -1,46 +1,54 @@
-import axios from "axios";
+//import axios from 'axios';
 import styled from "styled-components";
 import { useNavigate } from "react-router";
 import { useState } from "react";
+import { MdSave } from "react-icons/md";
+import axios from "axios";
 
-export default function Login() {
+export default function New_entry() {
+  const [value, setValue] = useState("");
+  const [description, setDescription] = useState("");
   const navigate = useNavigate();
-  const [login, setLogin] = useState("");
-  const [password, setPassword] = useState("");
   return (
     <Container>
-      <h1>MyWallet</h1>
+      <h1>Nova Entrada</h1>
+      <input
+        disabled={false}
+        type="number"
+        name="input"
+        placeholder="Valor"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
       <input
         disabled={false}
         type="text"
         name="input"
-        placeholder="Email"
-        value={login}
-        onChange={(e) => setLogin(e.target.value)}
+        placeholder="Descrição"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
       />
-      <input
-        disabled={false}
-        type="password"
-        name="input"
-        placeholder="Senha"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-
-      <Button onClick={() => logar()}>Entrar</Button>
-
-      <p onClick={() => navigate("/Cadastro")}>Primeira vez? Cadastre-se!</p>
+      <Button onClick={() => Save()}>Salvar Entrada</Button>
     </Container>
   );
 
-  function logar() {
+  function Save() {
     axios
-      .post("http://localhost:5000/login", {
-        email: login,
-        password: password,
-      })
-      .then((response) => {
-        localStorage.setItem("token", JSON.stringify(response.data));
+      .post(
+        "http://localhost:5000/add_or_remove_value",
+        {
+          type: "add",
+          valor: value,
+          description: description,
+        },
+        {
+          headers: {
+            authorization:
+              "Bearer " + " " + JSON.parse(localStorage.getItem("token")),
+          },
+        }
+      )
+      .then(() => {
         navigate("/home");
       })
       .catch((error) => {
@@ -55,17 +63,22 @@ const Container = styled.div`
   background-color: #8c11be;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   h1 {
-    font-family: "Saira Stencil One";
+    height: 28px;
+    width: 326px;
     font-style: normal;
-    font-weight: 400;
-    font-size: 32px;
-    line-height: 50px;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 31px;
+    /* identical to box height */
 
     color: #ffffff;
-    margin-bottom: 24px;
+
+    margin: 25px 0 22px 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   input {
     width: 326px;
@@ -87,17 +100,6 @@ const Container = styled.div`
     line-height: 23px;
 
     color: #000000;
-  }
-
-  p {
-    font-style: normal;
-    font-weight: 700;
-    font-size: 15px;
-    line-height: 18px;
-    /* identical to box height */
-
-    color: #ffffff;
-    margin-top: 36px;
   }
 `;
 
