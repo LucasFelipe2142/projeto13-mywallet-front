@@ -32,6 +32,9 @@ export default function Home() {
     });
   }, []);
 
+  if (valors.length === 0) {
+    return <img src="" />;
+  }
   return (
     <Container>
       <h1>
@@ -48,10 +51,19 @@ export default function Home() {
       <div className={haveValors}>
         <Box>
           <div className="valorsContainer">
-            {valors.map((val, index) => (
-              <div className="valor"> {`${val.description}: ${val.valor}`}</div>
+            {valors.map((val) => (
+              <div className="valor">
+                <div className="dateAndDescription">
+                  <div className="date">{val.date}</div> {val.description}
+                </div>
+                <Price cor={verifycolor(val.type)}> {val.valor} </Price>
+              </div>
             ))}
           </div>
+          <Balance cor={verifyCorSaldo()}>
+            <div className="saldo">Saldo</div>
+            {verifySaldo()}
+          </Balance>
         </Box>
       </div>
 
@@ -73,6 +85,26 @@ export default function Home() {
       </EntranceExit>
     </Container>
   );
+
+  function verifySaldo() {
+    let saldo = 0.0;
+    for (let i = 0; i < valors.length; i++) {
+      console.log(saldo);
+      if (valors[i].type === "add") saldo += parseFloat(valors[i].valor);
+      else saldo -= parseFloat(valors[i].valor);
+    }
+    return saldo;
+  }
+
+  function verifyCorSaldo() {
+    if (verifySaldo() >= 0) return "#03AC00";
+    else return "#C70000";
+  }
+
+  function verifycolor(cor) {
+    if (cor === "add") return "#03AC00";
+    else return "#C70000";
+  }
 }
 
 const Container = styled.div`
@@ -105,15 +137,12 @@ const Container = styled.div`
 `;
 
 const Box = styled.div`
+  position: relative;
   width: 326px;
   height: 446px;
 
   background: #ffffff;
   border-radius: 5px;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
 
   p {
     font-style: normal;
@@ -129,10 +158,39 @@ const Box = styled.div`
 
   .valorsContainer {
     width: 326px;
-    height: 446px;
-    padding: 23px 35px 0 35px;
+    padding-top: 23px;
+    display: flex;
+    flex-direction: column;
+    align-items: initial;
+
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: #000000;
+  }
+  .valor {
+    width: 326px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 12px 0 12px;
+    margin-bottom: 15px;
+  }
+  .dateAndDescription {
+    display: flex;
+  }
+  .date {
+    margin-right: 10px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+
+    color: #c6c6c6;
   }
 `;
+
 const EntranceExit = styled.div`
   width: 326px;
   display: flex;
@@ -159,5 +217,42 @@ const EntranceExit = styled.div`
   }
   .icon {
     font-size: 22px;
+  }
+`;
+
+const Price = styled.div`
+  color: ${(props) => props.cor};
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 19px;
+  text-align: right;
+`;
+
+const Balance = styled.div`
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  width: 326;
+  display: flex;
+  justify-content: space-between;
+  bottom: 10px;
+  padding: 0 12px 0 12px;
+
+  font-style: normal;
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 20px;
+  color: ${(props) => props.cor};
+  .saldo {
+    font-family: "Raleway";
+    font-style: normal;
+    font-weight: 700;
+    font-size: 17px;
+    line-height: 20px;
+    /* identical to box height */
+
+    color: black;
   }
 `;
