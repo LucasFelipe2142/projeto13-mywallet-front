@@ -1,4 +1,4 @@
-//import axios from 'axios';
+import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router";
 import { useState } from "react";
@@ -26,9 +26,33 @@ export default function New_exit() {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
-      <Button onClick={() => navigate("/home")}>Salvar Saida</Button>
+      <Button onClick={() => Save()}>Salvar Saida</Button>
     </Container>
   );
+
+  function Save() {
+    axios
+      .post(
+        "http://localhost:5000/add_or_remove_value",
+        {
+          type: "remove",
+          valor: value,
+          description: description,
+        },
+        {
+          headers: {
+            authorization:
+              "Bearer " + JSON.parse(localStorage.getItem("token")),
+          },
+        }
+      )
+      .then(() => {
+        navigate("/home");
+      })
+      .catch((error) => {
+        alert(error.message);
+      });
+  }
 }
 
 const Container = styled.div`
