@@ -40,7 +40,8 @@ export default function Login() {
         password: password,
       })
       .then((response) => {
-        localStorage.setItem("token", JSON.stringify(response.data));
+        localStorage.setItem("token", JSON.stringify(response.data.token));
+        localStorage.setItem("name", JSON.stringify(response.data.name));
         navigate("/home");
       })
       .catch((error) => {

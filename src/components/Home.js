@@ -14,38 +14,38 @@ export default function Home() {
   const [haveValors, setHaveValors] = useState([]);
 
   useEffect(() => {
-    const requisicao = axios.get(`http://localhost:5000/add_or_remove_value`, {
-      headers: {
-        authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
-      },
-    });
-
-    requisicao.then((Selecione) => {
-      if (Selecione === undefined) {
-        setNoValors("");
-        setHaveValors("clean");
-      } else {
-        setNoValors("clean");
-        setHaveValors("");
-        setValors(Selecione.data);
-      }
-    });
+    const requisicao = axios
+      .get(`http://localhost:5000/add_or_remove_value`, {
+        headers: {
+          authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
+        },
+      })
+      .then((Selecione) => {
+        console.log(Selecione.data.length);
+        if (Selecione.data.length === 0) {
+          setNoValors("");
+          setHaveValors("clean");
+        } else {
+          setNoValors("clean");
+          setHaveValors("");
+          setValors(Selecione.data);
+        }
+      });
   }, []);
 
-  if (valors.length === 0) {
-    return <img src="" />;
-  }
   return (
     <Container>
       <h1>
-        {`Olá, ${name}`}{" "}
+        {`Olá, ${JSON.parse(localStorage.getItem("name"))}`}{" "}
         <div onClick={() => navigate("/")}>
           <RiLogoutBoxRLine />
         </div>{" "}
       </h1>
       <div className={noValors}>
         <Box>
-          <p>Não há registros de entrada ou saída</p>
+          <p>
+            <h2>Não há registros de entrada ou saída</h2>
+          </p>
         </Box>
       </div>
       <div className={haveValors}>
@@ -145,6 +145,12 @@ const Box = styled.div`
   border-radius: 5px;
 
   p {
+    width: 326px;
+    height: 446px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     font-style: normal;
     font-weight: 400;
     font-size: 20px;
@@ -152,7 +158,9 @@ const Box = styled.div`
     text-align: center;
 
     color: #868686;
+  }
 
+  h2 {
     width: 180px;
   }
 
