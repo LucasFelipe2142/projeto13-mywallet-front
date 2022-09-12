@@ -5,8 +5,6 @@ import { useState, useEffect } from "react";
 import { RiLogoutBoxRLine, RiAddCircleLine } from "react-icons/ri";
 import { MdRemoveCircleOutline } from "react-icons/md";
 
-const name = "Fulano";
-
 export default function Home() {
   const navigate = useNavigate();
   const [valors, setValors] = useState([]);
@@ -14,7 +12,7 @@ export default function Home() {
   const [haveValors, setHaveValors] = useState([]);
 
   useEffect(() => {
-    const requisicao = axios
+    axios
       .get(`http://localhost:5000/add_or_remove_value`, {
         headers: {
           authorization: "Bearer " + JSON.parse(localStorage.getItem("token")),
@@ -37,7 +35,7 @@ export default function Home() {
     <Container>
       <h1>
         {`Olá, ${JSON.parse(localStorage.getItem("name"))}`}{" "}
-        <div onClick={() => navigate("/")}>
+        <div onClick={() => logout()}>
           <RiLogoutBoxRLine />
         </div>{" "}
       </h1>
@@ -85,6 +83,21 @@ export default function Home() {
       </EntranceExit>
     </Container>
   );
+
+  function logout() {
+    axios
+      .delete(
+        `http://localhost:5000/logout/${JSON.parse(
+          localStorage.getItem("token")
+        )}`
+      )
+      .then(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("name");
+        console.log("logged out");
+        navigate("/");
+      });
+  }
 
   function verifySaldo() {
     let saldo = 0.0;
